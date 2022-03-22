@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "python"
+version = "0.1.0"
+description = "used to communicate with node express server"
+authors = ["exkuretrol <33695301+exkuretrol@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.0.3"
+requests = "^2.27.1"
+pypinyin = "^0.46.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

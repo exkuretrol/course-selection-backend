@@ -1,0 +1,8 @@
+.vscode
+
+python/__pycache__
+python/poetry.lock
+
+node/node_modules
+node/package-lock.json
+node/sound_files/**
