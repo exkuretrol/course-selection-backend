@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上傳區</title>
+  <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+  <style>
+    input {
+      margin-right: .5em;
+      margin-left: .5em;
+    }
+    #transcript {
+      width: 25rem;
+    }
+    ol > li {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <fieldset>
+    <legend>簡易搜集系統</legend>
+    <p>步驟如下：</p>
+    <ol>
+      <li>
+        <p>你是誰？</p>
+        <input type="radio" id="A" name="uname"><label for="A">期翔</label>
+        <input type="radio" id="B" name="uname"><label for="B">家瑋</label>
+        <input type="radio" id="C" name="uname"><label for="C">承翰</label>
+        <input type="radio" id="D" name="uname"><label for="D">均凱</label>
+      </li>
+      <li>目前資料庫裡面含有 <span>?</span> 句已經紀錄的測資，其中 <span>?</span> 佔了 <span>?</span> 句。</li>
+      <li>
+        <p>請輸入測資文字：</p>
+        <input type="text" name="transcript" id="transcript">
+      </li>
+      <li>
+        <p>點擊開始錄音按鈕開始錄音</p>
+        <div id="control">
+          <button id="recordButton">開始錄音</button>
+        </div>
+      </li>
+    </ol>
+  </fieldset>
+</body>
+
+</html>

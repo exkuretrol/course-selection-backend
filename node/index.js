@@ -28,6 +28,10 @@ app.get("/", (req, res) => {
     res.status(200).sendFile("index.html", { root: __dirname + '/public' });
 });
 
+app.get("/upload", (req, res) => {
+    res.status(200).sendFile("upload.html", { root: __dirname + '/public'});
+});
+
 app.post("/notes", upload.single("audio_data"), async function (req, res) {
     // google speech-to-text API
     // Imports the Google Cloud client library
