@@ -5,4 +5,6 @@ python/poetry.lock
 
 node/node_modules
 node/package-lock.json
-node/sound_files/**
+node/sound_files
+sound_files
+.env

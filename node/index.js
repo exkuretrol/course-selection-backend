@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import express from 'express';
@@ -5,6 +6,7 @@ import multer from 'multer';
 import fetch from 'node-fetch';
 import { SpeechClient } from '@google-cloud/speech';
 import { readFileSync } from 'fs';
+import { createPool } from 'mysql';
 
 const storage = multer.diskStorage(
     {
@@ -22,14 +24,75 @@ const port = 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.use(express.static(__dirname + 'public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+console.log(__dirname);
+app.set('view engine', 'ejs');
+
+const pool = createPool({
+    connectionLimit: 10,
+    host: process.env.dbHost,
+    port: process.env.dbPort,
+    user: process.env.dbUser,
+    password: process.env.dbPass,
+    database: process.env.dbName
+});
 
 app.get("/", (req, res) => {
-    res.status(200).sendFile("index.html", { root: __dirname + '/public' });
+    res.status(200).send("<h3>這裡什麼都沒有喔~</h3>");
 });
 
 app.get("/upload", (req, res) => {
-    res.status(200).sendFile("upload.html", { root: __dirname + '/public'});
+    let sql = `
+    select 
+        count(*) as "全部測資"
+    from 
+        NER測資`;
+    pool.query(sql, (error, results, fields) => {
+        res.render(__dirname + '/views' + '/upload.ejs', {allRecords: results[0].全部測資});
+    });
+});
+
+app.get("/testdta", (req, res) => {
+    pool.query("select * from NER測資", (error, results, fields) => {
+        if (error) throw error;
+        res.send("number of rows is: " + results[0]);
+    });
+});
+
+app.get("/users/:userName", (req, res) => {
+    let uname = req.params.userName;
+    let sql = `
+    select * from (
+        select 
+            count(*) as "全部測資"
+        from 
+            NER測資
+    ) a, 
+    (
+        select 
+            count(*) as "某人的測資"
+        from 
+            NER測資
+        where
+            你是誰 = "${uname}"
+    ) b`;
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+        res.json(result[0]);
+    });
+});
+
+app.post("/users/:userName", (req, res) => {
+    let uname = req.params.userName;
+    let results = req.body;
+    let sql = `INSERT INTO NER測資 (你是誰, 測資文字, 語音辨識文字, 語音辨識注音, 語音檔路徑, 產生時間) VALUES ("${uname}", "${results.text}", "${results.transcript}", "${results.zhuyin}", "${results.filePath}", current_timestamp())`;
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+    });
+    res.sendStatus(200);
 });
 
 app.post("/notes", upload.single("audio_data"), async function (req, res) {
@@ -87,8 +150,10 @@ app.post("/notes", upload.single("audio_data"), async function (req, res) {
     const json = await res_zhuyin.json();
     const zhuyin = json['result'].join(' ');
 
-    res.status(200).send(`Transcription: ${transcription} <br> Zhuyin: ${zhuyin}`);
+    res.json(JSON.stringify({ "transcript" : transcription, "zhuyin" : zhuyin }));
+    // res.status(200).send(`Transcription: ${transcription} <br> Zhuyin: ${zhuyin}`);
 });
+
 
 app.listen(port, () => {
     console.log(`Express server listening on port: ${port}...`);
