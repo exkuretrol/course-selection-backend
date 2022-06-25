@@ -299,12 +299,20 @@
         $(":text").on("blur", move);
 
         function findValue(event) {
-            uname = $(this).val();
+            let uname = $(this).val();
+            function datediff (first, second) {
+                return Math.round((second - first) / (1000 * 60 * 60 * 24 * 7));
+            }
+            let startDate = new Date(2022, 3, 23);
+            let curDate = new Date().getTime();
+
+            let week = datediff(startDate, curDate);
+
             $.ajax({
                 method: "get",
                 url: `/users/${uname}`,
                 success: function (data) {
-                    let pattern = `目前資料庫裡面含有 <span>${data.全部測資}</span> 句已經紀錄的測資，其中 <span>${uname}</span> 佔了 <span>${data.某人的測資}</span> 句。`;
+                    let pattern = `<p>目前資料庫裡面含有 <span>${data.全部測資}</span> 句已經紀錄的測資，其中 <span>${uname}</span> 佔了 <span>${data.某人的測資}</span> 句，截至目前為止還需要 <span>${week * 10 - data.某人的測資}</span> 句。</p>`;
                     $("#Q2").html(pattern);
                     move();
                 }

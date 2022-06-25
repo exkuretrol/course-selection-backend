@@ -49,7 +49,9 @@ app.get("/upload", (req, res) => {
     select 
         count(*) as "全部測資"
     from 
-        NER測資`;
+        NER測資
+    `;
+
     pool.query(sql, (error, results, fields) => {
         res.render(__dirname + '/views' + '/upload.ejs', {allRecords: results[0].全部測資});
     });
