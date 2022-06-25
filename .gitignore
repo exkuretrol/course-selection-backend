@@ -6,5 +6,6 @@ python/poetry.lock
 node/node_modules
 node/package-lock.json
 node/sound_files
+node/test.js
 sound_files
 .env
