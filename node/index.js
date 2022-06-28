@@ -7,6 +7,8 @@ import fetch from 'node-fetch';
 import { SpeechClient } from '@google-cloud/speech';
 import { readFileSync } from 'fs';
 import { createPool } from 'mysql';
+import cors from 'cors';
+
 
 const storage = multer.diskStorage(
     {
@@ -19,17 +21,28 @@ const storage = multer.diskStorage(
 
 const upload = multer({ storage: storage });
 
+const another_storage = multer.diskStorage(
+    {
+        destination: './tmp/',
+        filename: function (req, file, cb) {
+            cb(null, file.originalname);
+        }
+    }
+);
+
+const another_upload = multer({ storage: another_storage });
+
 const app = express();
 const port = 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(cors());
 app.use(express.static(__dirname + 'public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-console.log(__dirname);
-app.set('view engine', 'ejs');
+app.set('view engine', 'hbs');
 
 const pool = createPool({
     connectionLimit: 10,
@@ -44,6 +57,12 @@ app.get("/", (req, res) => {
     res.status(200).send("<h3>這裡什麼都沒有喔~</h3>");
 });
 
+app.get("/recognize", (req, res) => {
+    res.render(__dirname + '/views' + '/recognize.hbs', {
+        title: "測試",
+    })
+});
+
 app.get("/upload", (req, res) => {
     let sql = `
     select 
@@ -53,7 +72,7 @@ app.get("/upload", (req, res) => {
     `;
 
     pool.query(sql, (error, results, fields) => {
-        res.render(__dirname + '/views' + '/upload.ejs', {allRecords: results[0].全部測資});
+        res.render(__dirname + '/views' + '/upload.hbs', {allRecords: results[0].全部測資});
     });
 });
 
@@ -156,6 +175,49 @@ app.post("/notes", upload.single("audio_data"), async function (req, res) {
     // res.status(200).send(`Transcription: ${transcription} <br> Zhuyin: ${zhuyin}`);
 });
 
+app.post("/recognize", another_upload.single("audio_data"), async (req, res) => {
+    const client = new SpeechClient();
+
+    const filename = req.file.path;
+    const encoding = '7bit';
+    const sampleRateHertz = 48000;
+    const languageCode = 'zh-TW';
+
+    const config = {
+        encoding: encoding,
+        sampleRateHertz: sampleRateHertz,
+        languageCode: languageCode
+        // enableAutomaticPunctuation: true
+    };
+
+    const audio = {
+        content: readFileSync(filename).toString('base64'),
+    };
+
+    const conf = {
+        config: config,
+        audio: audio,
+    };
+
+    const [operation] = await client.longRunningRecognize(conf);
+
+    const [response] = await operation.promise();
+    const transcription = response.results
+        .map(result => result.alternatives[0].transcript)
+        .join('\n');
+    const text = { "text" : transcription };
+
+    const res_zhuyin = await fetch("http://127.0.0.1:5000/zhuyin", {
+        method: 'POST',
+        body: JSON.stringify(text),
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    const json = await res_zhuyin.json();
+    const zhuyin = json['result'].join(' ');
+
+    res.json(JSON.stringify({ "transcript" : transcription, "zhuyin" : zhuyin }));
+});
 
 app.listen(port, () => {
     console.log(`Express server listening on port: ${port}...`);
