@@ -68,16 +68,18 @@ app.get("/upload", (req, res) => {
     select 
         count(*) as "全部測資"
     from 
-        NER測資
+        NER_data
     `;
 
     pool.query(sql, (error, results, fields) => {
-        res.render(__dirname + '/views' + '/upload.hbs', {allRecords: results[0].全部測資});
+        res.render(__dirname + '/views' + '/upload.hbs', {
+            allRecords: results[0].全部測資
+        });
     });
 });
 
 app.get("/testdta", (req, res) => {
-    pool.query("select * from NER測資", (error, results, fields) => {
+    pool.query("select * from NER_data", (error, results, fields) => {
         if (error) throw error;
         res.send("number of rows is: " + results[0]);
     });
@@ -90,13 +92,13 @@ app.get("/users/:userName", (req, res) => {
         select 
             count(*) as "全部測資"
         from 
-            NER測資
+            NER_data
     ) a, 
     (
         select 
             count(*) as "某人的測資"
         from 
-            NER測資
+            NER_data
         where
             你是誰 = "${uname}"
     ) b`;
@@ -109,7 +111,7 @@ app.get("/users/:userName", (req, res) => {
 app.post("/users/:userName", (req, res) => {
     let uname = req.params.userName;
     let results = req.body;
-    let sql = `INSERT INTO NER測資 (你是誰, 測資文字, 語音辨識文字, 語音辨識注音, 語音檔路徑, 產生時間) VALUES ("${uname}", "${results.text}", "${results.transcript}", "${results.zhuyin}", "${results.filePath}", current_timestamp())`;
+    let sql = `INSERT INTO NER_data (你是誰, 測資文字, 語音辨識文字, 語音辨識注音, 語音檔路徑, 產生時間) VALUES ("${uname}", "${results.text}", "${results.transcript}", "${results.zhuyin}", "${results.filePath}", current_timestamp())`;
     pool.query(sql, (error, result, fields) => {
         if (error) throw error;
     });
