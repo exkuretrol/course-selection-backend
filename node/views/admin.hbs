@@ -35,6 +35,7 @@
             downloadLink.download = $("#output-ner-data-to-json :selected").text();
             downloadLink.href = url;
             downloadLink.style.display = 'none';
+            if ($('#download-link').length > 0) $('#download-link').remove();
             document.body.appendChild(downloadLink);
             $('#download-btn').removeAttr('disabled');
           }
