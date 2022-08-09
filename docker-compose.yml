@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  react:
+    build: 
+      context: node
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./node:/app
+    ports:
+      - 3000:3000
+
+  python:
+    build: 
+      context: python
+      dockerfile: Dockerfile
+    volumes:
+      - ./python:/app

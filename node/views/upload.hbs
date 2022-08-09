@@ -215,7 +215,7 @@
                 const formData = new FormData();
                 formData.append("audio_data", blob, filename);
 
-                fetch('/notes', {
+                fetch('./notes', {
                     method: 'POST',
                     body: formData
                 }).then(async result => {
@@ -235,7 +235,7 @@
                 $(this).attr("disabled", true);
                 $.ajax({
                     type: "post",
-                    url: `/users/${uname}`,
+                    url: `./users/${uname}`,
                     data: JSON.stringify({
                         text: $("#transcript").val(),
                         transcript: results.transcript,
@@ -258,7 +258,7 @@
             $(":text").on("blur", move);
 
             function findValue(event) {
-                let uname = $(this).val();
+                uname = $(this).val();
                 function datediff(first, second) {
                     return Math.round((second - first) / (1000 * 60 * 60 * 24 * 7));
                 }
@@ -269,7 +269,7 @@
 
                 $.ajax({
                     method: "get",
-                    url: `/users/${uname}`,
+                    url: `./users/${uname}`,
                     success: function (data) {
                         let diff = week * 10 - data.某人的測資;
                         let diff_text = `，截至目前為止還需要 <span>${diff}</span>句。`;

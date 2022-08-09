@@ -6,9 +6,9 @@ import multer from 'multer';
 import fetch from 'node-fetch';
 import { SpeechClient } from '@google-cloud/speech';
 import { readFileSync } from 'fs';
-import { createPool } from 'mysql';
+import { createPool } from 'mysql2';
 import cors from 'cors';
-
+// TODO: move all route to routes.js file
 
 const storage = multer.diskStorage(
     {
@@ -53,6 +53,8 @@ const pool = createPool({
     database: process.env.dbName
 });
 
+const promisePool = pool.promise();
+
 app.get("/", (req, res) => {
     res.status(200).send("<h3>這裡什麼都沒有喔~</h3>");
 });
@@ -78,10 +80,74 @@ app.get("/upload", (req, res) => {
     });
 });
 
-app.get("/testdta", (req, res) => {
-    pool.query("select * from NER_data", (error, results, fields) => {
-        if (error) throw error;
-        res.send("number of rows is: " + results[0]);
+app.get("/data/output/:mode", async (req, res) => {
+    const mode = req.params.mode;
+    const sql = "select `測資手動NER` as json from NER_data";
+    const sql1 = "select `編號`, `語音辨識文字`, JSON_EXTRACT(`測資手動NER`, '$.tags') as tags from NER_data";
+
+    switch (mode) {
+        // 全部
+        case '0':
+            let resultA = await promisePool.query(sql)
+                .then(([rows, fields]) => {
+                    return rows.map((_) => { return JSON.parse(_.json) });
+                });
+
+            let resultB = await promisePool.query(sql1)
+                .then(([rows, fields]) => {
+                    return rows.map((_) => {
+                        let tokens = _.語音辨識文字.replace(/\s/g, '').split('');
+                        if (tokens.length !== _.tags.length) _.編號;
+                        return { "tokens": tokens, "tags": JSON.parse(_.tags) };
+                    })
+                });
+
+            let output = Array.prototype.concat(resultA, resultB);
+            res.json(output);
+
+            break;
+        // 只有輸入測資
+        case '1':
+            pool.query(sql, (error, results, fields) => {
+                if (error) throw error;
+                let result;
+                result = results.map((_) => { return JSON.parse(_.json) });
+                res.json(result);
+            });
+            break;
+        // 只有語音測資
+        case '2':
+            pool.query(sql1, (error, results, fields) => {
+                if (error) throw error;
+                let result;
+                result = results.map((_) => {
+                    let tokens = _.語音辨識文字.replace(/\s/g, '').split('');
+                    if (tokens.length !== _.tags.length) _.編號;
+                    return { "tokens": tokens, "tags": JSON.parse(_.tags) };
+                })
+                res.json(result);
+            });
+            break;
+
+        default:
+            res.sendStatus(404);
+            break;
+    }
+
+});
+
+app.get("/manualner", (req, res) => {
+    let sql = `
+    select 
+        count(*) as "全部測資"
+    from 
+        NER_data
+    `;
+
+    pool.query(sql, (error, results, fields) => {
+        res.render(__dirname + '/views' + '/manualner.hbs', {
+            allRecords: results[0].全部測資
+        });
     });
 });
 
@@ -107,6 +173,36 @@ app.get("/users/:userName", (req, res) => {
         res.json(result[0]);
     });
 });
+
+app.get("/ner-data/:no", (req, res) => {
+    const no = req.params.no;
+    let sql = `
+        select 
+            * 
+        from 
+            NER_data 
+        where
+            編號 = ${no}
+    `
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+        res.json(result[0]);
+    });
+});
+
+app.get("/admin", (req, res) => {
+    res.render(__dirname + '/views' + '/admin.hbs')
+});
+
+app.post('/ner-data/update', (req, res) => {
+    let json = req.body;
+    let json_string = JSON.stringify(req.body.json);
+    let sql = `UPDATE NER_data SET 測資手動NER = '${json_string}' WHERE 編號 = ${json.no};`
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+    });
+    res.sendStatus(200);
+})
 
 app.post("/users/:userName", (req, res) => {
     let uname = req.params.userName;
@@ -162,9 +258,9 @@ app.post("/notes", upload.single("audio_data"), async function (req, res) {
     const transcription = response.results
         .map(result => result.alternatives[0].transcript)
         .join('\n');
-    const text = { "text" : transcription };
+    const text = { "text": transcription };
 
-    const res_zhuyin = await fetch("http://127.0.0.1:5000/zhuyin", {
+    const res_zhuyin = await fetch("http://python:5000/zhuyin", {
         method: 'POST',
         body: JSON.stringify(text),
         headers: { 'Content-Type': 'application/json' }
@@ -173,7 +269,7 @@ app.post("/notes", upload.single("audio_data"), async function (req, res) {
     const json = await res_zhuyin.json();
     const zhuyin = json['result'].join(' ');
 
-    res.json(JSON.stringify({ "transcript" : transcription, "zhuyin" : zhuyin }));
+    res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
     // res.status(200).send(`Transcription: ${transcription} <br> Zhuyin: ${zhuyin}`);
 });
 
@@ -189,7 +285,6 @@ app.post("/recognize", another_upload.single("audio_data"), async (req, res) => 
         encoding: encoding,
         sampleRateHertz: sampleRateHertz,
         languageCode: languageCode
-        // enableAutomaticPunctuation: true
     };
 
     const audio = {
@@ -207,9 +302,9 @@ app.post("/recognize", another_upload.single("audio_data"), async (req, res) => 
     const transcription = response.results
         .map(result => result.alternatives[0].transcript)
         .join('\n');
-    const text = { "text" : transcription };
+    const text = { "text": transcription };
 
-    const res_zhuyin = await fetch("http://127.0.0.1:5000/zhuyin", {
+    const res_zhuyin = await fetch("http://python:5000/zhuyin", {
         method: 'POST',
         body: JSON.stringify(text),
         headers: { 'Content-Type': 'application/json' }
@@ -218,7 +313,7 @@ app.post("/recognize", another_upload.single("audio_data"), async (req, res) => 
     const json = await res_zhuyin.json();
     const zhuyin = json['result'].join(' ');
 
-    res.json(JSON.stringify({ "transcript" : transcription, "zhuyin" : zhuyin }));
+    res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
 });
 
 app.listen(port, () => {

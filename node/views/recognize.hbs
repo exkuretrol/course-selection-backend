@@ -112,7 +112,7 @@
         const formData = new FormData();
         formData.append("audio_data", blob, filename);
 
-        fetch('/recognize', {
+        fetch('./recognize', {
           method: 'POST',
           body: formData
         }).then(async result => {
@@ -132,7 +132,7 @@
         let text = $("#transcriptOutput").text();
         let json = {"text": text};
 
-        fetch("http://127.0.0.1:5000/filter", {
+        fetch("https://hub.kuaz.info/dev/api/filter", {
           body: JSON.stringify(json),
           method: 'POST',
           headers: {
