@@ -5,9 +5,7 @@ service_account.json
 __pycache__
 
 node/node_modules
-node/package-lock.json
 node/sound_files
 tmp
 sound_files
 .env
-python/func/__pycache__/helper.cpython-310.pyc
