@@ -26,7 +26,12 @@
           url: `./data/output/${mode}`,
           success: (res) => {
             let json = new Blob(
-              [JSON.stringify(res)],
+              [
+                JSON.stringify(res)
+                  .replace(/\[{"tokens"/g, '{"tokens"')
+                  .replace(/\]}]/g, ']}')
+                  .replace(/,{"tokens"/g, '\n{"tokens"')
+              ],
               {type: 'application/json'}
             );
             url = URL.createObjectURL(json);
