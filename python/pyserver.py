@@ -14,7 +14,7 @@ CORS(app, resources={
     }
 })
 
-@app.route('/zhuyin', methods=['POST'])
+@app.route('/api/zhuyin', methods=['POST'])
 def zhuyin():
     data = request.get_json()
 
@@ -24,7 +24,7 @@ def zhuyin():
 
     return json.dumps({"result": result})
 
-@app.route('/filter', methods=['POST'])
+@app.route('/api/filter', methods=['POST'])
 def filter():
     req = request.get_json()
     text = req['text']

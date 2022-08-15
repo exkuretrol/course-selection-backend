@@ -18,7 +18,7 @@
         no = e.target.value;
 
         $.ajax({
-          url: `./ner-data/${no}`,
+          url: `/api/data/${no}`,
           type: "get",
           data: JSON.stringify({ no: no }),
           success: function (res) {
@@ -103,9 +103,15 @@
 
       $('#update').on('click', function (e) {
         e.preventDefault();
+        console.log(
+          JSON.stringify({
+            no: no,
+            json: output_json
+          })
+        );
         $.ajax({
-          url: `./ner-data/update`,
-          type: 'post',
+          url: `/api/data`,
+          type: 'put',
           data: JSON.stringify({
             no: no,
             json: output_json

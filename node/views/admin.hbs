@@ -23,7 +23,7 @@
         if (mode === 'null') return;
         $.ajax({
           type: 'get',
-          url: `./data/output/${mode}`,
+          url: `/api/output/${mode}`,
           success: (res) => {
             let json = new Blob(
               [
