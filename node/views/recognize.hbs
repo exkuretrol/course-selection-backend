@@ -112,7 +112,7 @@
         const formData = new FormData();
         formData.append("audio_data", blob, filename);
 
-        fetch('./recognize', {
+        fetch('/api/recognize', {
           method: 'POST',
           body: formData
         }).then(async result => {
@@ -130,7 +130,7 @@
       $("#recognizeSubjectTeacherBtn").on("click", async function () {
         let subjectTeacherOutput = $("#subjectTeacherOutput");
         let text = $("#transcriptOutput").text();
-        let json = {"text": text};
+        let json = { "text": text };
 
         fetch("https://hub.kuaz.info/dev/api/filter", {
           body: JSON.stringify(json),
@@ -147,24 +147,7 @@
               <p>老師：${response['teacher']}</p>
             `)
           });
-
-        // $.ajax({
-        //   url: "http://127.0.0.1:5000/filter",
-        //   data: JSON.stringify(json),
-        //   type: "POST",
-        //   contentType: "application/json;charset=utf-8",
-        //   onSuccess: function (res) {
-        //     let json = JSON.parse(res);
-        //     console.table(json);
-        //   },
-        //   xhrFields: {
-        //     withCredentials: true
-        //   }
-        // })
       });
-
-
-    });
   </script>
 </head>
 
