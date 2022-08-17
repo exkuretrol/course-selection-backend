@@ -27,15 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // 首頁
 app.get("/", (req, res) => {
-    const html = `
-    <ul>
-        <li><a href="/recognize">語音辨識</a></li>
-        <li><a href="/upload">測資上傳</a></li>
-        <li><a href="/manualner">手動 ner</a></li>
-        <li><a href="/admin">管理</a></li>
-    </ul>
-    `;
-    res.send(html);
+    res.render('index.twig');
 });
 
 // 語音辨識頁面
@@ -50,7 +42,7 @@ app.get("/upload", (req, res) => {
     let sql = `select count(*) as "全部測資" from NER_data`;
 
     pool.query(sql, (error, results, fields) => {
-        res.render('upload.hbs', {
+        res.render('upload.twig', {
             allRecords: results[0].全部測資
         });
     });
@@ -58,12 +50,12 @@ app.get("/upload", (req, res) => {
 
 // 手動 ner 頁面
 app.get("/manualner",async (req, res) => {
-    res.render('manualner.hbs');
+    res.render('manualner.twig');
 });
 
 // 管理員頁面
 app.get("/admin", (req, res) => {
-    res.render('admin.hbs')
+    res.render('admin.twig')
 });
 
 app.use('/api', apiRouter);

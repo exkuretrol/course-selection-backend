@@ -1,0 +1,14 @@
+{% extends "base.twig" %}
+{% block title %}首頁{% endblock title %}
+{% block head %}
+{{ parent() }}
+{% endblock head %}
+
+{% block main %}
+<ul>
+  <li><a href="/recognize">語音辨識</a></li>
+  <li><a href="/upload">測資上傳</a></li>
+  <li><a href="/manualner">手動 ner</a></li>
+  <li><a href="/admin">管理</a></li>
+</ul>
+{% endblock main %}
