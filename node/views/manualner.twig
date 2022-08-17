@@ -139,7 +139,7 @@
 
 <body>
   <ul>
-    <li>目前總共有 <span>{{ allRecords }} 筆測資</span></li>
+    {{!-- <li>目前總共有 <span>{{ allRecords }} 筆測資</span></li> --}}
   </ul>
   <label for="ner-data-no">請選擇測資編號： </label>
   <input type="number" name="ner-data-no" id="ner-data-no" max="{{ allRecords }}" min="1">
@@ -166,6 +166,8 @@
     <option value="PEOPLE">老師</option>
     <option value="TIME">時間</option>
   </select>
+
+  <select name="" id=""></select>
 
   <div>
     <button id="update">更新</button>
