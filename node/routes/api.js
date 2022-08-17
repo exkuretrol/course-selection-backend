@@ -11,6 +11,7 @@ router.get("/output/:mode", async (req, res) => {
     const mode = req.params.mode;
     const sql = "select `測資手動NER` as json from NER_data";
     const sql1 = "select `編號`, `語音辨識文字`, JSON_EXTRACT(`測資手動NER`, '$.tags') as tags from NER_data";
+    const sql2 = 'SELECT `編號` FROM `NER_data` WHERE `測資手動NER` is null order by `編號`;';
     let resultA = await promisePool.query(sql)
         .then(([rows, fields]) => {
             return rows.map((_) => { return JSON.parse(_.json) });
@@ -46,6 +47,14 @@ router.get("/output/:mode", async (req, res) => {
             res.json(resultB);
             break;
 
+        case 'l':
+            let result = await promisePool.query(sql2)
+                .then(([rows, fields]) => {
+                    return rows.map(row => row.編號);
+                });
+            res.json(result);
+            break;
+            
         default:
             res.sendStatus(404);
             break;
