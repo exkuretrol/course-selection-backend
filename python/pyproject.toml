@@ -11,6 +11,8 @@ requests = "^2.27.1"
 pypinyin = "^0.46.0"
 pandas = "^1.4.3"
 Flask-Cors = "^3.0.10"
+transformers = "^4.21.1"
+torch = "^1.12.1"
 
 [tool.poetry.dev-dependencies]
 

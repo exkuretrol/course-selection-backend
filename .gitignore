@@ -1,4 +1,5 @@
 .vscode
+.DS_Store
 
 service_account.json
 
@@ -9,3 +10,5 @@ node/sound_files
 tmp
 sound_files
 .env
+
+test-ner*
