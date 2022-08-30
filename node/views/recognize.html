@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - 語音辨識測試</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const recordBtn = $("#record_btn");
+      const soundClips = $(".sound-clips");
+      const output = $('#console_output');
+      let blob;
+
+      const updateConsole = (msg) => {
+        output.text(msg + '\n' + output.text());
+      };
+      updateConsole('1');
+      updateConsole('2');
+      updateConsole('3');
+
+      var LOG_PREFIX = new Date().getDate() + '.' + new Date().getMonth() + '.' + new Date().getFullYear() + ' / ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+var log = console.log;
+
+console.log = function(){
+
+    // 1. Convert args to a normal array
+    var args = Array.from(arguments);
+    // OR you can use: Array.prototype.slice.call( arguments );
+        
+    // 2. Prepend log prefix log string
+    args.unshift(LOG_PREFIX + ": ");
+        
+    // 3. Pass along arguments to console.log
+    log.apply(console, args);
+}
+
+console.log('I did it!')
+
+      if (navigator.mediaDevices.getUserMedia) {
+        console.log("getUserMedia supported.");
+
+        const constraints = { audio: true };
+        let chunks = [];
+
+        let onSuccess = function (stream) {
+
+          const mediaRecorder = new MediaRecorder(stream);
+
+          recordBtn.on("mousedown", function (e) {
+            // mediaRecorder.start();
+            // console.log(mediaRecorder.state);
+            console.log("recorder started");
+
+            // recordBtn.css("background", "red");
+
+            // stopRecordBtn.attr("disabled", false);
+            // recordBtn.attr("disabled", true);
+          });
+
+          const stop_event = ['mouseup', 'mouseout']
+
+          stop_event.forEach(e => {
+            recordBtn.on(e, _ => {
+
+            // mediaRecorder.stop();
+            // console.log(mediaRecorder.state);
+            console.log("recorder stoped");
+
+            // recordBtn.css("background", "");
+            // recordBtn.css("color", "");
+
+            // stopRecordBtn.attr("disabled", true);
+            // recordBtn.attr("disabled", false);
+            });
+          });
+
+
+          {{!-- mediaRecorder.onstop = function (e) {
+            const clipContainer = document.createElement("article");
+            const clipLabel = document.createElement("p");
+            const audio = document.createElement("audio");
+            const deleteButton = document.createElement("button");
+
+            clipContainer.classList.add("clip");
+            audio.setAttribute("controls", "");
+            deleteButton.textContent = "刪除";
+            deleteButton.className = "delete";
+
+            labelName = new Date().getTime() + ".ogg";
+            // clipLabel.textContent = labelName;
+            clipLabel.textContent = labelName;
+
+            clipContainer.appendChild(audio);
+            clipContainer.appendChild(clipLabel);
+            clipContainer.appendChild(deleteButton);
+            soundClips.appendChild(clipContainer);
+
+            audio.controls = true;
+            blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
+            chunks = [];
+            const audioURL = window.URL.createObjectURL(blob);
+            audio.src = audioURL;
+            console.log("recorder stoped");
+
+            deleteButton.onclick = function (e) {
+              let eventTarget = e.target;
+              eventTarget.parentNode.parentNode.removeChild(eventTarget.parentNode);
+            };
+          };
+
+          mediaRecorder.ondataavailable = function (e) {
+            chunks.push(e.data);
+          } --}}
+        };
+        let onError = function (err) {
+          console.log("The following error has occured" + err);
+        }
+
+        navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
+      } else {
+        console.log("getUserMedia not supported on your browser!");
+      };
+
+      {{!-- $("#recognizeBtn").on("click", function () {
+        if (blob === undefined) {
+          alert("要先錄音ㄛ");
+          return;
+        };
+        $(this).attr("disabled", true);
+        uploadSoundData(blob);
+      });
+      let results;
+
+      function uploadSoundData(blob) {
+        const filename = labelName;
+        const formData = new FormData();
+        formData.append("audio_data", blob, filename);
+
+        fetch('/api/recognize', {
+          method: 'POST',
+          body: formData
+        }).then(async result => {
+          results = await result.json()
+            .then(res => {
+              return JSON.parse(res);
+            });
+          $("#transcriptOutput").html(results.transcript);
+          $("#zhuyinOutput").html(results.zhuyin);
+        }).catch(error => {
+          $("#transcriptOutput").html("An error occurred: " + error);
+        })
+      }
+
+      $("#recognizeSubjectTeacherBtn").on("click", async function () {
+        let subjectTeacherOutput = $("#subjectTeacherOutput");
+        let text = $("#transcriptOutput").text();
+        let json = { "text": text };
+
+        fetch("https://hub.kuaz.info/dev/api/filter", {
+          body: JSON.stringify(json),
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .catch(error => console.error('Error:', error))
+          .then(response => {
+            subjectTeacherOutput.html(`
+              <p>科目：${response['subject']}</p>
+              <p>老師：${response['teacher']}</p>
+            `)
+          }); --}}
+      });
+  </script>
+</head>
+
+<body>
+  <p>點擊『開始錄音』按鈕開始錄音。</p>
+  <section class="control">
+    <div class="buttons">
+      <button id="record_btn">按著不放開開始錄音</button>
+    </div>
+  </section>
+  <section>
+    <pre id="console_output"></pre>
+  </section>
+</body>
+
+</html>
