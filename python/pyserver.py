@@ -6,7 +6,7 @@ import json
 from ckip_transformers.ckip_transformers.nlp import CkipWordSegmenter, CkipPosTagger, CkipNerChunker
 
 print("Initializing drivers ... NER")
-ner_driver = CkipNerChunker(model_name="./test-ner3600")
+ner_driver = CkipNerChunker(model_name="./NER")
 print("Initializing drivers ... done")
 
 app = Flask(__name__)
