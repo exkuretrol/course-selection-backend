@@ -5,8 +5,10 @@ from func.helper import findTeacherSubject
 import json
 from ckip_transformers.ckip_transformers.nlp import CkipWordSegmenter, CkipPosTagger, CkipNerChunker
 
+model_name = "./test-ner3696"
+
 print("Initializing drivers ... NER")
-ner_driver = CkipNerChunker(model_name="./NER")
+ner_driver = CkipNerChunker(model_name=model_name)
 print("Initializing drivers ... done")
 
 app = Flask(__name__)
