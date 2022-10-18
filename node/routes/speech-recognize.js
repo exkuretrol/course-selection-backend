@@ -20,7 +20,7 @@ router.post("/recognize", upload.single("audio_data"), async function (req, res)
     const client = new SpeechClient();
 
     const filename = req.file.path;
-    const encoding = '7bit';
+    const encoding = 'OGG_OPUS';
     const sampleRateHertz = 48000;
     const languageCode = 'zh-TW';
 
@@ -28,7 +28,6 @@ router.post("/recognize", upload.single("audio_data"), async function (req, res)
         encoding: encoding,
         sampleRateHertz: sampleRateHertz,
         languageCode: languageCode
-        // enableAutomaticPunctuation: true
     };
 
     const audio = {
@@ -48,16 +47,17 @@ router.post("/recognize", upload.single("audio_data"), async function (req, res)
         .join('\n');
     const text = { "text": transcription };
 
-    const json = await fetch(`http://${process.env.pythonHost}/api/zhuyin`, {
-        method: 'POST',
-        body: JSON.stringify(text),
-        headers: { 'Content-Type': 'application/json' }
-    })
-        .then(_ => _.json());
+    // const json = await fetch(`http://${process.env.pythonHost}/api/zhuyin`, {
+    //     method: 'POST',
+    //     body: JSON.stringify(text),
+    //     headers: { 'Content-Type': 'application/json' }
+    // })
+    //     .then(_ => _.json());
 
-    const zhuyin = json['result'].join(' ');
+    // const zhuyin = json['result'].join(' ');
 
-    res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
+    // res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
+    res.json(JSON.stringify(text));
 });
 
 export { router };
