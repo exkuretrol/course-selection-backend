@@ -6,8 +6,11 @@ import { pool } from './src/pool.js';
 import { router as apiRouter } from './routes/api.js';
 import { router as recogApiRouter } from './routes/speech-recognize.js';
 import morgan from 'morgan';
+import cors from 'cors'
 
 const app = express();
+// cors
+app.use(cors());
 
 // log
 app.use(morgan('dev'));
@@ -61,7 +64,7 @@ app.get("/admin", (req, res) => {
 app.use('/api', apiRouter);
 app.use('/api', recogApiRouter);
 
-const port = 3000;
+const port = 4000;
 app.listen(port, () => {
     console.log(`Express server listening on port: ${port}...`);
 });
