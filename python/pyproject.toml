@@ -12,8 +12,13 @@ pypinyin = "^0.46.0"
 pandas = "^1.4.3"
 Flask-Cors = "^3.0.10"
 transformers = "^4.21.1"
-torch = "^1.12.1"
 SQLAlchemy = "^1.4.41"
+pymysql = "^1.0.2"
+python-dotenv = "^0.21.0"
+bs4 = "^0.0.1"
+torch = {url = "https://files.pythonhosted.org/packages/79/b3/eaea3fc35d0466b9dae1e3f9db08467939347b3aaa53c0fd81953032db33/torch-1.13.0-cp310-none-macosx_11_0_arm64.whl"}
+lxml = "^4.9.1"
+pprintpp = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 
