@@ -102,9 +102,18 @@ def ner_query(text: List[NerToken]):
         elif 'PEOPLE' in sentence.ner:           #老師
             # people_count += 1
             se = pinyin(word, style=Style.BOPOMOFO)  #注音
-            se = "%%".join([item for innerlist in se for item in innerlist])  #刪[]
+            l = [item for innerlist in se for item in innerlist]
+            se = "%%".join(l)  #刪[]
             se = re.sub('[ˊˇˋ˙]','',se)   #拿掉音調
-            people.append(se)
+            # print(se)
+            if 'ㄓㄨ%%ㄈㄥ' in se:
+                print("A")
+                people.append('ㄗㄨ%%ㄈㄥ')
+            elif 'ㄇㄧㄥ%%ㄧㄤ' in se:
+                print("B")
+                people.append('ㄇㄧㄣ%%ㄧㄤ')
+            else:
+                people.append(se)
         elif 'DEPARTMENT' in sentence.ner:       #系
             # if word not in Department.keys():
             if '學院' in word:
@@ -112,7 +121,7 @@ def ner_query(text: List[NerToken]):
                 for num in range(int(len(d)/2)):
                     department.append(d[num*2:num*2+2])
                 continue
-            else :
+            else:
                 department.append(Department[word])
         elif 'CATEGORY' in sentence.ner:         #選別
             word_zhuyin = toZhuYin(word)
