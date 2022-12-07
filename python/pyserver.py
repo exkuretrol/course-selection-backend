@@ -53,6 +53,7 @@ def filter():
 
 
 @app.route('/api/ner', methods=['POST'])
+
 def ner():
     req = request.get_json()
     if len(req['text']) == 0: 
@@ -61,11 +62,12 @@ def ner():
     if (req['multiple']):
         text = req['text'];
     else:
+        # add outer list
         text = [req['text']];
     
     ner = ner_driver(text)
     
-    def format2json(ner_item):
+    def format2object(ner_item):
         return [
             {
                 "word": entity.word,
@@ -75,14 +77,19 @@ def ner():
         ]
     query_statement = ner_query(ner[0])
     try:
-        query_result = pd.read_sql_query(query_statement, engine).to_json(orient='split', force_ascii=False);
+        query_result = pd.read_sql_query(query_statement, engine)
+        tdf = pd.read_csv("latest.csv", dtype={'科目代號': 'str', '開班／選課人數': 'str'})
+        # aaa = query_result.join(other=tdf, on='科目代號')
+        query_result = query_result.join(tdf.set_index("科目代號"), on="科目代號", how="left")
+        print(query_result)
+        query_result = query_result.to_json(orient='split', force_ascii=False);
         query_result = json.loads(query_result);
         response = {
             "status": "success",
-            "result": [format2json(nerr) for nerr in ner],
-            "tbl": query_result
+            "result": [format2object(nerr) for nerr in ner],
+            "tbl": query_result,
+            "sql": query_statement
         }
-        print(response)
         return make_response(
             json.dumps(response),
             200
@@ -108,7 +115,8 @@ def query():
         return make_response(
             json.dumps({
                 "status": "success",
-                "tbl": query_result
+                "tbl": query_result,
+                "sql": query_statement
             }),
             200
         )
@@ -157,7 +165,7 @@ def cirriculum():
 
         df3 = newdf2.drop("科目代號／科目名稱", axis = 1)
 
-        df3 = df3[df3.columns[[8, 9, 0, 1, 2, 3, 4, 5, 6, 7]]]
+        df3: pd.DataFrame = df3[df3.columns[[8, 9, 0, 1, 2, 3, 4, 5, 6, 7]]]
 
         return make_response(
             json.dumps({
@@ -171,5 +179,6 @@ def cirriculum():
             json.dumps({"status": "error"}),
             400
         )
+
 if __name__ == "__main__":
     app.run(port=5000)
