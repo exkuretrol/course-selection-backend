@@ -12,7 +12,7 @@ def General_Education(cs, semester):   # 通識
     option = Options()
     option.add_argument('--headless')  # 啟動Headless 無頭
     option.add_argument('--disable-gpu') #關閉GPU 避免某些系統或是網頁出錯
-    driver = webdriver.Chrome('/D:/大四(上)/專研/成品/爬蟲/chromedriver.exe', options = option)   # 執行chrome driver
+    driver = webdriver.Chrome(options = option)   # 執行chrome driver
     driver.get('https://www.mcu.edu.tw/student/new-query/sel-query/query_menu.asp?gdb=2&gyy=111')   # 連結網站(選擇學期)
 
     if semester == '1':
@@ -46,7 +46,7 @@ def Elective(dt, semester):   # 選修
     option = Options()
     option.add_argument('--headless')  # 啟動Headless 無頭
     option.add_argument('--disable-gpu') #關閉GPU 避免某些系統或是網頁出錯
-    driver = webdriver.Chrome('/D:/大四(上)/專研/成品/爬蟲/chromedriver.exe', options = option)   # 執行chrome driver
+    driver = webdriver.Chrome(options = option)   # 執行chrome driver
     driver.get('https://www.mcu.edu.tw/student/new-query/sel-query/query_menu.asp?gdb=2&gyy=111')   # 連結網站(選擇學期)
 
     if semester == '1':
@@ -89,7 +89,7 @@ def Compulsory(dt, semester):   # 必修
     option = Options()
     option.add_argument('--headless')  # 啟動Headless 無頭
     option.add_argument('--disable-gpu') #關閉GPU 避免某些系統或是網頁出錯
-    driver = webdriver.Chrome('/D:/大四(上)/專研/成品/爬蟲/chromedriver.exe', options = option)   # 執行chrome driver
+    driver = webdriver.Chrome(options = option)   # 執行chrome driver
     driver.get('https://www.mcu.edu.tw/student/new-query/sel-query/query_menu.asp?gdb=2&gyy=111')   # 連結網站(選擇學期)
 
     if semester == '1':
