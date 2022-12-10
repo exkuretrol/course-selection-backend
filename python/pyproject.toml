@@ -24,6 +24,7 @@ lxml = "^4.9.1"
 pprintpp = "^0.4.0"
 selenium = "^4.7.2"
 schedule = "^1.1.0"
+ckip-transformers = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 

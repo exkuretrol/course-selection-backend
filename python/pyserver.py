@@ -4,7 +4,7 @@ from pypinyin import Style, pinyin
 from func.helper import findTeacherSubject
 from func.ner_query import ner_query
 import json
-from ckip_transformers.ckip_transformers.nlp import CkipNerChunker
+from ckip_transformers.nlp import CkipNerChunker
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, exc
 from os import getenv
