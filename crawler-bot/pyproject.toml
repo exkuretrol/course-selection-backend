@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["exkuretrol <33695301+exkuretrol@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "crawler_bot"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.10"

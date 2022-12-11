@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  react:
+  node:
     build: 
       context: node
       dockerfile: Dockerfile
@@ -16,6 +16,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./python:/app
+    ports:
+      - 4000:4000
 
   crawler-bot:
     build:

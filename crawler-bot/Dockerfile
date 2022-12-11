@@ -8,12 +8,13 @@ RUN pip install poetry
 
 # Copy only requirements to cache them in docker layer
 WORKDIR /app
-COPY ["pyproject.toml", "poetry.lock", "./"]
+
+COPY ["pyproject.toml", "poetry.lock", "/app/"]
 
 # Project initialization
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-dev --no-interaction --no-ansi
+  && poetry install --only main --no-interaction --no-ansi
 
-COPY . .
+COPY [".", "/app/"] 
 
 CMD ["python", "web_crawler.py"]
