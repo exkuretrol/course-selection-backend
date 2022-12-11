@@ -1,20 +1,17 @@
 from flask import Flask, request, make_response
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from pypinyin import Style, pinyin
-from func.helper import findTeacherSubject
 from func.ner_query import ner_query
 import json
 from ckip_transformers.nlp import CkipNerChunker
-from dotenv import load_dotenv
 from sqlalchemy import create_engine, exc
-from os import getenv
 import pandas as pd
 from bs4 import BeautifulSoup
-from pprint import pprint
-
-model_name = "./test-ner3696"
+from dotenv import load_dotenv
+from os import getenv
 
 load_dotenv()
+model_name = getenv('model_name')
 
 url = f"mysql+pymysql://{getenv('user')}:{getenv('pass')}@{getenv('host')}:{getenv('port')}/NER"
 
@@ -44,16 +41,7 @@ def zhuyin():
 
     return json.dumps({"result": result})
 
-@app.route('/api/filter', methods=['POST'])
-def filter():
-    req = request.get_json()
-    text = req['text']
-    sub, thr = findTeacherSubject(text)
-    return json.dumps({"subject": sub, "teacher": thr})
-
-
 @app.route('/api/ner', methods=['POST'])
-
 def ner():
     req = request.get_json()
     if len(req['text']) == 0: 
