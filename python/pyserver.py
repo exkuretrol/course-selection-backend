@@ -92,7 +92,7 @@ def ner():
             400
         )
 
-@app.route('/api/query', methods=['POST'])
+@app.route('/api/queryById', methods=['POST'])
 def query():
     try:
         req = request.get_json()
