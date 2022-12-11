@@ -19,7 +19,7 @@ services:
 
   crawler-bot:
     build:
-      content: crawler-bot
+      context: crawler-bot
       dockerfile: Dockerfile
     volumes:
       - ./crawler-bot:/app
