@@ -16,3 +16,10 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./python:/app
+
+  crawler-bot:
+    build:
+      content: crawler-bot
+      dockerfile: Dockerfile
+    volumes:
+      - ./crawler-bot:/app

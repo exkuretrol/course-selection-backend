@@ -2,7 +2,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
+import schedule
 
 def crawl_cirriculum(semester: int):
     df_full = pd.DataFrame(columns=["科目名稱", "科目代號", "班級代號", "班級名稱", "開班／選課人數"])
@@ -18,7 +18,7 @@ def crawl_cirriculum(semester: int):
             "連江專班": "4",
             "基河校區": "5"
         }
-        dict
+
         for k, v in school.items():
             form_data = [
                 ('sch', v),  # 校區 1 ~ 5
