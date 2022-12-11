@@ -10,13 +10,11 @@ RUN pip install poetry
 WORKDIR /app
 COPY ["pyproject.toml", "poetry.lock", "./"]
 
-EXPOSE 5000
-
 # Project initialization
 RUN poetry config virtualenvs.create false \
   && poetry install --no-dev --no-interaction --no-ansi
 
-# run app
 EXPOSE 5000
 
+# run app
 CMD [ "flask", "run", "--host=0.0.0.0" ]
