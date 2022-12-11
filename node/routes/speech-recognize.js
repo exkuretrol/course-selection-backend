@@ -47,17 +47,17 @@ router.post("/recognize", upload.single("audio_data"), async function (req, res)
         .join('\n');
     const text = { "text": transcription };
 
-    // const json = await fetch(`http://${process.env.pythonHost}/api/zhuyin`, {
-    //     method: 'POST',
-    //     body: JSON.stringify(text),
-    //     headers: { 'Content-Type': 'application/json' }
-    // })
-    //     .then(_ => _.json());
+    const json = await fetch(`http://${process.env.pythonHost}/api/zhuyin`, {
+        method: 'POST',
+        body: JSON.stringify(text),
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then(_ => _.json());
 
-    // const zhuyin = json['result'].join(' ');
+    const zhuyin = json['result'].join(' ');
 
-    // res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
-    res.json(JSON.stringify(text));
+    res.json(JSON.stringify({ "transcript": transcription, "zhuyin": zhuyin }));
+    // res.json(JSON.stringify(text));
 });
 
 export { router };
