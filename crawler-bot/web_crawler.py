@@ -1,10 +1,15 @@
-from time import sleep
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import schedule
+from time import sleep, strftime
+from pathlib import Path
+from schedule import run_pending, repeat, every
 
-def crawl_cirriculum(semester: int):
+output_dir = Path().parent.absolute() / "output"
+if not (output_dir.exists()):
+    output_dir.mkdir()
+
+def crawl_cirriculum(semester: int) -> None:
     df_full = pd.DataFrame(columns=["科目名稱", "科目代號", "班級代號", "班級名稱", "開班／選課人數"])
     try:
         if (semester > 2 or semester < 1):
@@ -30,7 +35,7 @@ def crawl_cirriculum(semester: int):
                 # ('esec1', '8'),       # 結束節次
             ]
 
-            print(f"處理{k}中...")
+            print(f"處理 {k} 中...")
             r = requests.post(
                 "https://www.mcu.edu.tw/student/new-query/sel-query/qslist_1.asp",
                 cookies=semester_cookie,
@@ -57,8 +62,33 @@ def crawl_cirriculum(semester: int):
     except ValueError as err:
         print(err)
 
-    df_full.to_csv("latest.csv", index=False)
+    # TODO: join by class id, subject id and semester?
+    output_file = output_dir / f"semester_{semester}.csv"
+    df_full.to_csv(output_file, index=False)
 
-
-if __name__ == "__main__":
+@repeat(every(5).minutes)
+def crawl_all_cirrisulum() -> None:
     crawl_cirriculum(semester=1)
+    crawl_cirriculum(semester=2)
+    semester_1_csv = output_dir / "semester_1.csv"
+    semester_2_csv = output_dir / "semester_2.csv"
+    latest_csv = output_dir / "latest.csv"
+    
+    semester_1_df = pd.read_csv(semester_1_csv, header=0)
+    semester_2_df = pd.read_csv(semester_2_csv, header=0)
+
+    if (semester_1_csv.exists()):
+        semester_1_csv.unlink()
+
+    if (semester_2_csv.exists()):
+        semester_2_csv.unlink()
+
+    if (latest_csv.exists()):
+        latest_csv.rename(output_dir / f"latest_{strftime('%Y-%m-%d %H:%M')}.csv")
+
+    pd.concat([semester_1_df, semester_2_df]).to_csv(latest_csv, index=False)
+    print("執行完畢")
+
+while True:
+    run_pending()
+    sleep(1)
