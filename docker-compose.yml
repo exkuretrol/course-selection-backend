@@ -25,3 +25,4 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./crawler-bot:/app
+      - ./python/output:/app/output
