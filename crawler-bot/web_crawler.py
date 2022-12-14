@@ -35,7 +35,6 @@ def crawl_cirriculum(semester: int) -> None:
                 # ('esec1', '8'),       # 結束節次
             ]
 
-            print(f"處理 {k} 中...")
             r = requests.post(
                 "https://www.mcu.edu.tw/student/new-query/sel-query/qslist_1.asp",
                 cookies=semester_cookie,
@@ -47,6 +46,7 @@ def crawl_cirriculum(semester: int) -> None:
             soup = BeautifulSoup(r.text, 'html.parser')
             table = soup.select_one("table").prettify()
 
+            # TODO: add exception here.
             df = pd.read_html(table, header=0)[0]
             df[["科目代號", "科目名稱"]] = df["科目"].str.strip().str.split(pat=" ",
                                                                   n=1,
@@ -57,7 +57,6 @@ def crawl_cirriculum(semester: int) -> None:
             df = df.copy()[["科目名稱", "科目代號", "班級代號", "班級名稱", "開班／選課人數"]]
             df_full = pd.concat([df_full, df], ignore_index=True)
 
-            print("修眠5秒")
             sleep(5)
     except ValueError as err:
         print(err)
@@ -87,7 +86,7 @@ def crawl_all_cirrisulum() -> None:
         latest_csv.rename(output_dir / f"latest_{strftime('%Y-%m-%d %H:%M')}.csv")
 
     pd.concat([semester_1_df, semester_2_df]).to_csv(latest_csv, index=False)
-    print("執行完畢")
+    print(f"{strftime('%Y-%m-%d %H:%M')}執行完畢")
 
 while True:
     run_pending()
