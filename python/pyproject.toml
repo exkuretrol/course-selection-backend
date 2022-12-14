@@ -21,6 +21,7 @@ torch = [
     {platform = 'linux', version = "^1.13.0"}
 ]
 ckip-transformers = "^0.3.2"
+bs4 = "^0.0.1"
 
 [tool.poetry.group.dev.dependencies]
 yapf = "^0.32.0"
