@@ -13,4 +13,4 @@ sound_files
 .env
 
 test-ner*
-crawler-bot/output
+output
