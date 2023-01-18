@@ -63,6 +63,51 @@ router.get("/output/:mode", async (req, res) => {
 });
 
 /**
+ * 輸出 NER 種類
+ */
+router.get("/ner/category", async (req, res) => {
+    const sql = "select * from NER_category";
+    let result = await promisePool.query(sql)
+    res.json(result[0]);
+});
+
+/**
+ * 更新 NER 種類
+ */
+router.put('/ner/category', (req, res) => {
+    let json = req.body;
+    let sql = `UPDATE NER_category SET Name = '${json.Name}', Tag = '${json.Tag}' WHERE ID = ${json.ID};`
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+    });
+    res.sendStatus(200);
+})
+
+/**
+ * 刪除 NER 種類
+ */
+router.delete('/ner/category/:ID', (req, res) => {
+    let ID = req.params.ID;
+    let sql = `DELETE FROM NER_category WHERE ID = ${ID}`
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+    });
+    res.sendStatus(200);
+});
+
+/**
+ * 新增 NER 種類
+ */
+router.post('/ner/category', (req, res) => {
+    let json = req.body;
+    let sql = `INSERT INTO NER_category (ID, Name, Tag) VALUES (NULL, '${json.Name}', '${json.Tag}');`
+    pool.query(sql, (error, result, fields) => {
+        if (error) throw error;
+    });
+    res.sendStatus(200);
+}) 
+
+/**
  * 使用者測資數目
  */
 router.get("/users/:userName", (req, res) => {
