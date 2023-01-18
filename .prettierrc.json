@@ -19,5 +19,8 @@
     "useTabs": false,
     "vueIndentScriptAndStyle": false,
     "filepath": "/Users/kuaz/Workspace/School/Research/auto-course-selection/node/views/admin.twig",
-    "parser": "angular"
+    "parser": "angular",
+    "plugins": [
+        "prettier-plugin-tailwindcss"
+    ]
   }

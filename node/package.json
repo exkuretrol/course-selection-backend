@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "type": "module",
@@ -24,5 +24,8 @@
   },
   "nodemonConfig": {
     "ext": "twig,html,js"
+  },
+  "devDependencies": {
+    "prettier-plugin-tailwindcss": "^0.2.1"
   }
 }
