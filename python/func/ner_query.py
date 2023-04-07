@@ -313,8 +313,8 @@ def ner_query(text: List[NerToken]):
         sql += "0";
     if len(cond) == 1:
         sql += cond[0];
-        sql += ' and `學期數` = "上學期"';
+        sql += " and `學期數` = '上學期'";
     if len(cond) > 1: 
         sql += ' and '.join(cond);
-        sql += ' and `學期數` = "上學期"';
+        sql += " and `學期數` = '上學期'";
     return sql
