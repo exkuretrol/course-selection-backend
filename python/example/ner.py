@@ -3,7 +3,7 @@ from ckip_transformers.nlp import CkipNerChunker
 from os import getenv
 from pathlib import Path
 
-load_dotenv()
+load_dotenv("../.env")
 model_name = getenv("model_name")
 
 model_path = Path().parent.absolute().parent / model_name
