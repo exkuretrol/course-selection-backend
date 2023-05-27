@@ -43,6 +43,7 @@ def zhuyin():
 
     return json.dumps({"result": result})
 
+
 @app.route('/api/ner', methods=['POST'])
 def ner():
     req = request.get_json()
@@ -76,10 +77,9 @@ def ner():
                               '班級名稱': 'str',
                               '開班／選課人數': 'str'
                           })
-        tdf.drop(["科目名稱", "班級名稱", "班級代號"], inplace=True, axis=1)
-        query_result = query_result.join(tdf.set_index("科目代號"),
-                                         on="科目代號",
-                                         how="left")
+        tdf.drop(["科目名稱", "班級名稱"], inplace=True, axis=1)
+        query_result = pd.merge(query_result, tdf, on=[
+                                '科目代號', '班級代號'], how='left')
         print(query_result)
         query_result = query_result.to_json(orient='split', force_ascii=False)
         query_result = json.loads(query_result)
